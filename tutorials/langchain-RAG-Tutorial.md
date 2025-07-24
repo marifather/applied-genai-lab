@@ -125,6 +125,6 @@ We’ll build a fully working RAG Chatbot using:
 
 > ✅ This file is part of the [RAG-Tutorial Series](../)  
 > 🛠️ Maintained by: `@mari-ai-builder`  
-> 📂 File: `tutorials/rag-theory.md`  
+> 📂 File: `tutorials/langchain-RAG-Tutorial.md`  
 > 🗓️ Date: `2025-07-24`
 
