@@ -1,35 +1,43 @@
-# 🧠 LangChain Sales Agent RAG Bot — Full Setup Guide
+---
+title: "Sales Agent Bot - LangChain RAG with Pinecone"
+description: "A Retrieval-Augmented Generation (RAG) chatbot for sales documentation queries using LangChain, OpenAI, and Pinecone."
+created: 2025-08-03
+---
 
-This guide walks you through creating a LangChain-powered Sales Agent chatbot that uses OpenAI + Pinecone to answer product-related questions from your company documentation (scraped from WordPress). Even beginners can follow along!
+# 💼 Sales Agent RAG Bot (LangChain + Pinecone)
+
+This project demonstrates how to build a **RAG-based Sales Assistant** that answers product and sales-related queries using your internal documentation (scraped from WordPress). It uses:
+
+- 🧠 **LangChain**
+- 🧾 **OpenAI** for embeddings and chat
+- 🧱 **Pinecone** for semantic vector search
+- 🐍 Python + `.env` for configuration
 
 ---
 
-## 📁 Project Overview
+## 🗂 Folder Structure
 
-- **Bot Name**: Sales Agent RAG Bot  
-- **Architecture**: RAG (Retrieval Augmented Generation)  
-- **Stack**: Python + LangChain + OpenAI + Pinecone  
-- **Use Case**: Answer sales-related queries from product documentation
-
----
-
-## 🧪 Step 1: Setup Virtual Environment
-
-```bash
-# Navigate to your project directory
-cd ~/langchain/sales_agent_bot
-
-# Create virtual environment
-python -m venv ragbot-env
-
-# Activate environment (Linux/macOS)
-source ragbot-env/bin/activate
-
-# If you're on Windows (PowerShell):
-# .\ragbot-env\Scripts\activate
+```
+sales_agent_bot/
+├── productdocs_full.json   # Crawled documentation content
+├── crawler_selenium.py     # Scraper for productdocs.kensium.com
+├── embed_to_pinecone.py    # Embeds chunks into Pinecone
+├── ask.py                  # Ask questions from the bot
+├── .env                    # Secure credentials
 ```
 
-## 📦 Step 2: Install Dependencies
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Create a Virtual Environment
+
+```bash
+python -m venv ragbot-env
+source ragbot-env/bin/activate
+```
+
+### 2. Install Dependencies
 
 ```bash
 pip install langchain==0.3.27 \
@@ -41,78 +49,89 @@ pip install langchain==0.3.27 \
             pinecone-client==3.0.0 \
             python-dotenv
 ```
-## 🔐 Step 3: Setup .env File
-Create a .env file in your root folder:
 
-```
-OPENAI_API_KEY=your_openai_key_here
-PINECONE_API_KEY=your_pinecone_key_here
-PINECONE_INDEX=langchain-rag-sales-agent-index
+### 3. Create Your `.env` File
+
+```env
+OPENAI_API_KEY=sk-...              # Your OpenAI Key
+PINECONE_API_KEY=pcsk-...          # Your Pinecone Key
 PINECONE_ENVIRONMENT=us-east-1
+PINECONE_INDEX=langchain-rag-sales-agent-index
 ```
-## 🕷️ Step 4: Crawl Product Documentation (optional)
-Use the provided crawler_selenium.py script to crawl and save documentation from https://productdocs.kensium.com.
 
-```
+---
+
+## 🕸️ Crawl Product Documentation
+
+```bash
 python crawler_selenium.py
 ```
-This will generate a file: productdocs_full.json
 
-## 🔢 Step 5: Embed Documents into Pinecone
-Run the following script to embed and upload content:
+This will create `productdocs_full.json` by crawling all valid internal links from `https://productdocs.kensium.com`.
 
-```
+---
+
+## 🧠 Embed Documents to Pinecone
+
+```bash
 python embed_to_pinecone.py
 ```
+
 You should see output like:
 
 ```
 🔢 Embedding 12039 chunks...
 ✅ Upload complete to Pinecone index: langchain-rag-sales-agent-index | namespace: productdocs-v1
 ```
-You can also verify the record count on the Pinecone dashboard.
 
-## 🤖 Step 6: Ask Questions Using ask.py
-This script loads data from Pinecone and allows you to query the documents using OpenAI.
+---
 
-```
+## 💬 Ask Questions from Documentation
+
+```bash
 python ask.py
 ```
 
-Example queries:
+Sample interactions:
+
 ```
 🔍 Ask your question (or type 'exit'): What is Kensium WMS?
-🔍 Ask your question (or type 'exit'): How does your Adobe connector work?
+
+🧠 Answer: Kensium WMS is an advanced inventory management system...
+
+🔍 Ask your question (or type 'exit'): What is Kensium Adobe connector?
+
+🧠 Answer: The Kensium Adobe Connector helps integrate Adobe software...
 ```
 
-## 🧠 Enhancements
-✅ Use gpt-4o instead of gpt-3.5-turbo in ask.py:
+---
 
-```
-llm = ChatOpenAI(api_key=OPENAI_API_KEY, model="gpt-4o")
-```
-✅ Improve system prompt:
+## 🌟 Optional Enhancements
 
-- Add branding
+- ✅ Use `gpt-4o` for better reasoning:
+  ```python
+  llm = ChatOpenAI(api_key=OPENAI_API_KEY, model="gpt-4o")
+  ```
 
-- Add tone guidelines
+- ✅ Improve system prompt tone and format
+- ✅ Display source URLs from Pinecone metadata
+- ✅ Add streaming + frontend (Streamlit, Gradio, Webflow)
 
-- Add source attribution
+---
 
-✅ Display document sources (URLs) with answers for trust and traceability
+## 🚫 Security Notes
 
-## 🧼 Tips
-- Restart your virtual environment if you change .env
+- Do not commit `.env` files to Git
+- Always use `.gitignore` for secrets
 
-- Clear Pinecone namespace if re-uploading embeddings
+---
 
-- Keep chunk size between 400–600 characters for best quality
+## 📌 Resources
 
-- You can split documents with overlap to preserve meaning
+- [LangChain Documentation](https://docs.langchain.com/)
+- [Pinecone Docs](https://docs.pinecone.io/)
+- [OpenAI Platform](https://platform.openai.com/)
 
-## ✅ You’re Done!
-You’ve built a fully functional RAG bot powered by LangChain + OpenAI + Pinecone.
+---
 
-Need help?
-📬 Contact: mariappanp@kensium.com
-
+_Contributed by [@marifather](https://github.com/marifather) | Part of the [applied-genai-lab](https://github.com/marifather/applied-genai-lab)_
