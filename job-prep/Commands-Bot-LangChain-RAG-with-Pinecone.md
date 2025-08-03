@@ -1,7 +1,7 @@
 ---
 title: "Commands Bot - LangChain RAG with Pinecone"
 description: "A Retrieval-Augmented Generation (RAG) chatbot to answer Linux and DevOps commands using LangChain, OpenAI, and Pinecone."
-created: 2025-08-03
+created: 2025-07-28
 ---
 
 # 🤖 Commands Bot (LangChain RAG)
