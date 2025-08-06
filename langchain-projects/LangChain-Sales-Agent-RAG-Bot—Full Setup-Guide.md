@@ -86,7 +86,30 @@ You should see output like:
 
 ---
 
-## 💬 Ask Questions from Documentation
+## 💬 Ask Questions from Documentation with added memory support
+
+## The memory portion in the code
+```
+# Memory setup
+store: Dict[str, BaseChatMessageHistory] = {}
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+    return store[session_id]
+
+# Final memory-enhanced chain
+memory_chain = RunnableWithMessageHistory(
+    contextualize_question.assign(
+        context=RunnableLambda(lambda x: retriever.invoke(
+            x["question"].content if hasattr(x["question"], "content") else x["question"]
+        ))
+    ) | rag_chain,
+    get_session_history,
+    input_messages_key="question",
+    history_messages_key="chat_history"
+)
+```
 
 ```bash
 python ask.py
@@ -95,13 +118,12 @@ python ask.py
 Sample interactions:
 
 ```
-🔍 Ask your question (or type 'exit'): What is Kensium WMS?
+🔍 Ask your question (or type 'exit'): what is kensium pos
+🧠 Answer: Kensium POS is a point-of-sale system designed to integrate seamlessly with Acumatica, a cloud-based ERP system. It is developed by Kensium to provide a comprehensive solution for retail businesses, enabling them to manage sales transactions, inventory, customer data, and more, all within a unified platform. Kensium POS is designed to enhance the efficiency and accuracy of retail operations by offering features such as real-time inventory updates, customer relationship management, and detailed sales reporting. Its integration with Acumatica ensures that data flows smoothly between the POS system and the ERP, providing businesses with a holistic view of their operations.
+🔍 Ask your question (or type 'exit'): for what reason the customers can use this
+🧠 Answer: Customers can use Kensium POS for several reasons, particularly if they are looking to streamline and enhance their retail operations. Here are some key reasons why businesses might choose Kensium POS:
 
-🧠 Answer: Kensium WMS is an advanced inventory management system...
-
-🔍 Ask your question (or type 'exit'): What is Kensium Adobe connector?
-
-🧠 Answer: The Kensium Adobe Connector helps integrate Adobe software...
+1. **Seamless Integration with Acumatica**: Kensium POS is designed to integrate seamlessly with Acumatica ERP, allowing for real-time data synchronization. This integration ensures that sales, inventory, and customer information are consistently updated across systems, reducing errors and improving efficiency.
 ```
 
 ---
